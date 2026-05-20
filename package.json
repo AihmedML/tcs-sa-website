@@ -1,0 +1,21 @@
+{
+  "name": "thought-creators-storytelling-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:smoke": "node tests/smoke.mjs"
+  },
+  "dependencies": {
+    "gsap": "latest",
+    "lenis": "latest",
+    "three": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "playwright": "latest"
+  }
+}
