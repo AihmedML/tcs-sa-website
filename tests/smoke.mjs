@@ -73,6 +73,28 @@ try {
   const orbitCardCount = await page.locator(".orbit-card").count();
   assert(orbitCardCount === 4, `Expected 4 orbit cards, found ${orbitCardCount}.`);
 
+  const desktopHeroLayout = await page.evaluate(() => {
+    const title = document.querySelector(".hero .chapter-title").getBoundingClientRect();
+    const orbit = document.querySelector(".brand-orbit").getBoundingClientRect();
+    return {
+      viewportWidth: window.innerWidth,
+      titleLeft: title.left,
+      titleRight: title.right,
+      titleWidth: title.width,
+      orbitLeft: orbit.left,
+      orbitRight: orbit.right,
+      orbitWidth: orbit.width,
+    };
+  });
+  assert(
+    desktopHeroLayout.titleLeft >= desktopHeroLayout.viewportWidth * 0.45,
+    `Expected hero title to stay visible on the right side, got left ${desktopHeroLayout.titleLeft}.`,
+  );
+  assert(
+    desktopHeroLayout.orbitRight <= desktopHeroLayout.viewportWidth * 0.62,
+    `Expected orbit visual to stay out of the text column, got right ${desktopHeroLayout.orbitRight}.`,
+  );
+
   const orbitRingState = await page.evaluate(() => {
     const orbit = document.querySelector(".brand-orbit");
     const orbitRect = orbit.getBoundingClientRect();
@@ -90,11 +112,38 @@ try {
     assert(ring.heightRatio <= 0.5, `Expected orbit ring ${index + 1} to stay compact, got height ratio ${ring.heightRatio.toFixed(2)}.`);
   });
   const orbitRingAnimations = await page.locator(".orbit-path").evaluateAll((paths) =>
-    paths.map((path) => getComputedStyle(path).animationName),
+    paths.map((path) => {
+      const style = getComputedStyle(path);
+      return {
+        duration: Number.parseFloat(style.animationDuration),
+        name: style.animationName,
+        timing: style.animationTimingFunction,
+      };
+    }),
   );
   assert(
-    orbitRingAnimations.every((animationName) => animationName === "none"),
-    `Expected orbit rings to stay static, got animations: ${orbitRingAnimations.join(", ")}.`,
+    orbitRingAnimations.some((animation) => animation.name.includes("rotateOrbitClockwise")),
+    `Expected at least one clockwise orbit animation, got: ${orbitRingAnimations.map((animation) => animation.name).join(", ")}.`,
+  );
+  assert(
+    orbitRingAnimations.some((animation) => animation.name.includes("rotateOrbitCounterClockwise")),
+    `Expected at least one counter-clockwise orbit animation, got: ${orbitRingAnimations.map((animation) => animation.name).join(", ")}.`,
+  );
+  assert(
+    orbitRingAnimations.every((animation) => animation.duration >= 28),
+    `Expected slow premium orbit animations, got durations: ${orbitRingAnimations.map((animation) => animation.duration).join(", ")}.`,
+  );
+
+  const orbitNodeState = await page.locator(".orbit-node").evaluateAll((nodes) =>
+    nodes.map((node) => ({
+      parentIsRing: node.parentElement?.classList.contains("orbit-path"),
+      transform: getComputedStyle(node).transform,
+    })),
+  );
+  assert(orbitNodeState.length >= 3, `Expected moving orbit nodes, found ${orbitNodeState.length}.`);
+  assert(
+    orbitNodeState.every((node) => node.parentIsRing),
+    "Expected orbit nodes to be nested inside moving orbit rings.",
   );
 
   const orbImage = page.locator(".hero-orb-image");

@@ -88,13 +88,16 @@ function brandOrbit() {
 
   return `
     <div class="brand-orbit reveal" aria-label="Thought Creators interactive orbit">
-      <div class="orbit-path orbit-path--one"></div>
-      <div class="orbit-path orbit-path--two"></div>
-      <div class="orbit-path orbit-path--three"></div>
-      <span class="orbit-node orbit-node--one"></span>
-      <span class="orbit-node orbit-node--two"></span>
-      <span class="orbit-node orbit-node--three"></span>
-      <span class="orbit-node orbit-node--four"></span>
+      <div class="orbit-path orbit-path--one">
+        <span class="orbit-node orbit-node--one"></span>
+      </div>
+      <div class="orbit-path orbit-path--two">
+        <span class="orbit-node orbit-node--two"></span>
+      </div>
+      <div class="orbit-path orbit-path--three">
+        <span class="orbit-node orbit-node--three"></span>
+        <span class="orbit-node orbit-node--four"></span>
+      </div>
       <img src="/assets/thought-creators-orb.png" class="hero-orb-image" alt="Thought Creators orb" />
       ${cards
         .map(

@@ -172,9 +172,18 @@ a {
 }
 
 .hero {
-  grid-template-columns: minmax(320px, 0.85fr) minmax(520px, 1.15fr);
+  direction: ltr;
+  grid-template-columns: minmax(480px, 0.88fr) minmax(520px, 1.12fr);
   gap: clamp(32px, 6vw, 82px);
   overflow: visible;
+}
+
+.hero__copy {
+  direction: rtl;
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  max-width: 780px;
 }
 
 .eyebrow {
@@ -284,6 +293,10 @@ a {
 
 .brand-orbit {
   position: relative;
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: center;
+  width: min(100%, 900px);
   min-height: clamp(520px, 43vw, 650px);
   overflow: visible;
   transform-style: preserve-3d;
@@ -315,8 +328,10 @@ a {
   width: min(56%, 640px);
   height: 17%;
   border-radius: 50%;
-  border-top: 2px solid rgba(104, 177, 255, 0.36);
-  box-shadow: 0 -2px 28px rgba(42, 132, 255, 0.3);
+  border-top: 1px solid rgba(104, 177, 255, 0.14);
+  box-shadow: 0 -2px 46px rgba(42, 132, 255, 0.12);
+  filter: blur(11px);
+  opacity: 0.34;
   transform: rotate(-11deg);
 }
 
@@ -343,17 +358,24 @@ a {
   top: 52%;
   width: min(66%, 640px);
   height: 34%;
+  z-index: 2;
   border: 1px solid rgba(147, 205, 255, 0.28);
   border-radius: 50%;
-  transform: translate(-50%, -50%) rotate(-12deg);
-  animation: none;
+  transform: translate(-50%, -50%) rotateX(64deg) rotateZ(-12deg);
+  transform-style: preserve-3d;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+  animation: rotateOrbitClockwise 44s linear infinite;
 }
 
 .orbit-path--two {
   top: 51%;
   width: min(58%, 580px);
   height: 28%;
-  transform: translate(-50%, -50%) rotate(18deg);
+  --orbit-depth-opacity: 0.56;
+  transform: translate(-50%, -50%) rotateX(69deg) rotateZ(18deg);
+  animation-name: rotateOrbitCounterClockwise;
+  animation-duration: 58s;
   opacity: 0.68;
 }
 
@@ -361,41 +383,45 @@ a {
   top: 58%;
   width: min(58%, 580px);
   height: 22%;
-  transform: translate(-50%, -50%) rotate(-25deg);
+  --orbit-depth-opacity: 0.48;
+  transform: translate(-50%, -50%) rotateX(61deg) rotateZ(-25deg);
+  animation-name: rotateOrbitClockwiseLow;
+  animation-duration: 72s;
   border-color: rgba(88, 166, 255, 0.18);
 }
 
 .orbit-node {
   position: absolute;
-  z-index: 4;
+  z-index: 3;
   width: 18px;
   aspect-ratio: 1;
   border-radius: 50%;
   background: radial-gradient(circle at 30% 25%, #fff, #60a9ff 38%, #0751d8 72%);
   box-shadow: 0 0 22px rgba(113, 188, 255, 0.9);
+  transform: translate(-50%, -50%);
   animation: nodePulse 5.8s ease-in-out infinite;
 }
 
 .orbit-node--one {
-  top: 28%;
-  left: 31%;
+  top: 12%;
+  left: 82%;
 }
 
 .orbit-node--two {
-  top: 48%;
-  right: 16%;
+  top: 52%;
+  left: 100%;
   animation-delay: -0.8s;
 }
 
 .orbit-node--three {
-  bottom: 19%;
-  left: 24%;
+  top: 98%;
+  left: 23%;
   animation-delay: -1.4s;
 }
 
 .orbit-node--four {
-  bottom: 26%;
-  right: 31%;
+  top: 16%;
+  left: 63%;
   animation-delay: -2s;
 }
 
@@ -490,15 +516,62 @@ a {
   }
 }
 
-@keyframes orbitDrift {
-  to {
-    rotate: 360deg;
+@keyframes rotateOrbitClockwise {
+  0% {
+    opacity: 0.24;
+    transform: translate(-50%, -50%) rotateX(64deg) rotateZ(-12deg);
+  }
+
+  46% {
+    opacity: var(--orbit-depth-opacity, 0.42);
+  }
+
+  100% {
+    opacity: 0.24;
+    transform: translate(-50%, -50%) rotateX(64deg) rotateZ(348deg);
+  }
+}
+
+@keyframes rotateOrbitCounterClockwise {
+  0% {
+    opacity: 0.2;
+    transform: translate(-50%, -50%) rotateX(69deg) rotateZ(18deg);
+  }
+
+  52% {
+    opacity: var(--orbit-depth-opacity, 0.46);
+  }
+
+  100% {
+    opacity: 0.2;
+    transform: translate(-50%, -50%) rotateX(69deg) rotateZ(-342deg);
+  }
+}
+
+@keyframes rotateOrbitClockwiseLow {
+  0% {
+    opacity: 0.16;
+    transform: translate(-50%, -50%) rotateX(61deg) rotateZ(-25deg);
+  }
+
+  48% {
+    opacity: var(--orbit-depth-opacity, 0.4);
+  }
+
+  100% {
+    opacity: 0.16;
+    transform: translate(-50%, -50%) rotateX(61deg) rotateZ(335deg);
   }
 }
 
 @keyframes nodePulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
   50% {
-    transform: scale(1.28);
+    transform: translate(-50%, -50%) scale(1.24);
     opacity: 0.72;
   }
 }
@@ -971,6 +1044,13 @@ a {
 
   .hero {
     grid-template-columns: 1fr;
+    direction: rtl;
+  }
+
+  .hero__copy,
+  .brand-orbit {
+    grid-column: auto;
+    grid-row: auto;
   }
 
   .chapter-title,
