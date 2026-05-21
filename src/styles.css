@@ -310,10 +310,10 @@ a {
 }
 
 .brand-orbit::after {
-  right: 8%;
-  bottom: 14%;
-  width: 72%;
-  height: 22%;
+  right: 19%;
+  bottom: 17%;
+  width: min(56%, 640px);
+  height: 17%;
   border-radius: 50%;
   border-top: 2px solid rgba(104, 177, 255, 0.36);
   box-shadow: 0 -2px 28px rgba(42, 132, 255, 0.3);
@@ -339,26 +339,30 @@ a {
 
 .orbit-path {
   position: absolute;
-  inset: 26% 5% 24%;
+  left: 50%;
+  top: 52%;
+  width: min(66%, 640px);
+  height: 34%;
   border: 1px solid rgba(147, 205, 255, 0.28);
   border-radius: 50%;
-  transform: rotate(-12deg);
-  animation: orbitDrift 24s linear infinite;
+  transform: translate(-50%, -50%) rotate(-12deg);
+  animation: none;
 }
 
 .orbit-path--two {
-  inset: 30% 8% 29%;
-  transform: rotate(18deg);
-  animation-duration: 31s;
-  animation-direction: reverse;
+  top: 51%;
+  width: min(58%, 580px);
+  height: 28%;
+  transform: translate(-50%, -50%) rotate(18deg);
   opacity: 0.68;
 }
 
 .orbit-path--three {
-  inset: 37% 4% 33%;
-  transform: rotate(-25deg);
+  top: 58%;
+  width: min(58%, 580px);
+  height: 22%;
+  transform: translate(-50%, -50%) rotate(-25deg);
   border-color: rgba(88, 166, 255, 0.18);
-  animation-duration: 38s;
 }
 
 .orbit-node {

@@ -73,6 +73,30 @@ try {
   const orbitCardCount = await page.locator(".orbit-card").count();
   assert(orbitCardCount === 4, `Expected 4 orbit cards, found ${orbitCardCount}.`);
 
+  const orbitRingState = await page.evaluate(() => {
+    const orbit = document.querySelector(".brand-orbit");
+    const orbitRect = orbit.getBoundingClientRect();
+    return Array.from(document.querySelectorAll(".orbit-path")).map((path) => {
+      const rect = path.getBoundingClientRect();
+      return {
+        widthRatio: rect.width / orbitRect.width,
+        heightRatio: rect.height / orbitRect.height,
+      };
+    });
+  });
+  assert(orbitRingState.length === 3, `Expected 3 orbit rings, found ${orbitRingState.length}.`);
+  orbitRingState.forEach((ring, index) => {
+    assert(ring.widthRatio <= 0.76, `Expected orbit ring ${index + 1} to stay compact, got width ratio ${ring.widthRatio.toFixed(2)}.`);
+    assert(ring.heightRatio <= 0.5, `Expected orbit ring ${index + 1} to stay compact, got height ratio ${ring.heightRatio.toFixed(2)}.`);
+  });
+  const orbitRingAnimations = await page.locator(".orbit-path").evaluateAll((paths) =>
+    paths.map((path) => getComputedStyle(path).animationName),
+  );
+  assert(
+    orbitRingAnimations.every((animationName) => animationName === "none"),
+    `Expected orbit rings to stay static, got animations: ${orbitRingAnimations.join(", ")}.`,
+  );
+
   const orbImage = page.locator(".hero-orb-image");
   await orbImage.waitFor({ state: "visible" });
   const orbState = await orbImage.evaluate((node) => {
