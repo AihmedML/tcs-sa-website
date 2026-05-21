@@ -1,5 +1,6 @@
 import { chromium } from "playwright";
 import { createServer } from "vite";
+import { readFileSync } from "node:fs";
 
 const port = 4600 + Math.floor(Math.random() * 1000);
 
@@ -12,6 +13,13 @@ function assert(condition, message) {
 let server;
 
 try {
+  const wranglerConfig = readFileSync("wrangler.jsonc", "utf8");
+  assert(wranglerConfig.includes('"directory": "./dist"'), "Expected Wrangler static assets to deploy dist.");
+  assert(
+    wranglerConfig.includes('"not_found_handling": "single-page-application"'),
+    "Expected Wrangler static assets to use SPA fallback.",
+  );
+
   server = await createServer({
     logLevel: "silent",
     server: { host: "127.0.0.1", port, strictPort: true },
